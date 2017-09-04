@@ -109,4 +109,7 @@
     <java-symbol type="string" name="config_deviceDcDimmingEnableValue" />
     <java-symbol type="string" name="config_deviceDcDimmingDisableValue" />
 
+    <!-- Battery Leds -->
+    <java-symbol type="bool" name="config_intrusiveBatteryLed" />
+
 </resources>

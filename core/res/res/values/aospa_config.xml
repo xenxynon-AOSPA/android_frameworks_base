@@ -133,4 +133,7 @@
          to disable DC dimming -->
     <string name="config_deviceDcDimmingDisableValue">0</string>
 
+    <!-- Is the battery LED intrusive? Used to decide if there should be a disable option -->
+    <bool name="config_intrusiveBatteryLed">false</bool>
+
 </resources>
