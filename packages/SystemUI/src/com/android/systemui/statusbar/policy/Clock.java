@@ -37,7 +37,6 @@ import android.text.style.CharacterStyle;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.util.ArraySet;
-import android.view.ContextThemeWrapper;
 import android.view.Display;
 import android.view.View;
 import android.widget.TextView;
