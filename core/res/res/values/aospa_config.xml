@@ -100,4 +100,8 @@
 
     <!-- Default value for Horizon light color (Blue) -->
     <integer name="config_AmbientPulseLightColor">0x3980FF</integer>
+
+    <!-- Whether to spoof device as Pixel XL for Google Photos -->
+    <bool name="config_spoofGooglePhotos">true</bool>
+
 </resources>
