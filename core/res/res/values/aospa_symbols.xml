@@ -110,4 +110,7 @@
     <!-- Battery Leds -->
     <java-symbol type="bool" name="config_intrusiveBatteryLed" />
 
+    <!-- Whether to spoof device as Pixel XL for Google Photos -->
+    <java-symbol type="bool" name="config_spoofGooglePhotos" />
+
 </resources>
