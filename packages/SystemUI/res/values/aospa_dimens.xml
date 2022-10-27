@@ -25,4 +25,7 @@
     <dimen name="mobile_type_icon_margin_vertical">1.5dp</dimen>
     <dimen name="mobile_type_icon_inset_vertical">-2dp</dimen>
 
+    <!-- Bluetooth dialog -->
+    <dimen name="bluetooth_dialog_active_device_bottom_margin">4dp</dimen>
+
 </resources>
