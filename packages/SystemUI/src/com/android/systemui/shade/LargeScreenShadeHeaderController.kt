@@ -130,6 +130,7 @@ class LargeScreenShadeHeaderController @Inject constructor(
     private val batteryIcon: BatteryMeterView = header.findViewById(R.id.batteryRemainingIcon)
     private val clock: Clock = header.findViewById(R.id.clock)
     private val date: TextView = header.findViewById(R.id.date)
+    private val networkTraffic: TextView = header.findViewById(R.id.networkTraffic)
     private val iconContainer: StatusIconContainer = header.findViewById(R.id.statusIcons)
     private val qsCarrierGroup: QSCarrierGroup = header.findViewById(R.id.carrier_group)
 
@@ -515,6 +516,7 @@ class LargeScreenShadeHeaderController @Inject constructor(
             }
             clock.setTextColor(textColorPrimary)
             date.setTextColor(textColorPrimary)
+            networkTraffic.setTextColor(textColorPrimary)
             qsCarrierGroup.updateColors(textColorPrimary, colorStateList)
             batteryIcon.updateColors(textColorPrimary, textColorSecondary, textColorPrimary)
         }
