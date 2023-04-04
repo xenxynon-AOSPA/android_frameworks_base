@@ -131,8 +131,11 @@ public class QSCarrier extends LinearLayout {
     }
 
     public void updateColors(ColorStateList colorStateList) {
-        mMobileRoaming.setImageTintList(colorStateList);
-        mMobileSignal.setImageTintList(colorStateList);
+        final boolean visible = !mIsSingleCarrier;
+        if (visible) {
+            mMobileRoaming.setImageTintList(colorStateList);
+            mMobileSignal.setImageTintList(colorStateList);
+        }
     }
 
     @VisibleForTesting
