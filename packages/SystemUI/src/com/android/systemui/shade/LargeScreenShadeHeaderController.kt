@@ -310,15 +310,10 @@ class LargeScreenShadeHeaderController @Inject constructor(
         }
 
         dumpManager.registerDumpable(this)
-        configurationController.addCallback(configurationControllerListener)
+configurationController.addCallback(configurationControllerListener)
 
-<<<<<<< HEAD
-        onHeaderStateChanged();
-        updateResources()
-=======
         updateVisibility()
         updateTransition()
->>>>>>> parent of 768a86f8c1e6 (SystemUI: Follow light/dark theme in SplitShade Header)
     }
 
     override fun onViewDetached() {
