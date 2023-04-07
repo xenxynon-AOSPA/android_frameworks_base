@@ -109,14 +109,13 @@
     <Constraint
         android:id="@+id/networkTraffic">
         <Layout
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/qs_header_non_clickable_element_height"
-            app:layout_constraintHeight_min="@dimen/qs_header_non_clickable_element_height"
-            app:layout_constraintStart_toEndOf="@id/batteryRemainingIcon"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/new_qs_header_non_clickable_element_height"
+            app:layout_constraintWidth_default="wrap"
+            app:layout_constraintHeight_min="@dimen/new_qs_header_non_clickable_element_height"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/date"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintBottom_toBottomOf="@id/date"
             />
     </Constraint>
 
