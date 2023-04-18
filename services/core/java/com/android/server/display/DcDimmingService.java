@@ -85,7 +85,7 @@ public class DcDimmingService extends SystemService {
         public void onReceive(Context context, Intent intent) {
             if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) {
                 Slog.v(TAG, "mIntentReceiver ACTION_SCREEN_ON"
-				+ " mPendingOnScreenOn:" + mPendingOnScreenOn);
+                        + " mPendingOnScreenOn:" + mPendingOnScreenOn);
                 mScreenOff = false;
                 mHandler.postDelayed(() -> {
                     if (mPendingOnScreenOn) {
