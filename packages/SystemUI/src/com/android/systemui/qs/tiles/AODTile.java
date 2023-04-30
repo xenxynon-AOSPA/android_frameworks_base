@@ -110,7 +110,7 @@ public class AODTile extends QSTileImpl<BooleanState> {
 
     @Override
     public int getMetricsCategory() {
-        return MetricsEvent.AOSPA;
+        return MetricsEvent.PIXYS;
     }
 
     @Override
