@@ -54,6 +54,4 @@
     <!-- Name of the network traffic indicator on status bar. -->
     <string name="status_bar_network_traffic">Real-time internet speed</string>
 
-   <!-- AOD QS tile -->
-    <string name="quick_settings_aod_label">AOD</string>
 </resources>
