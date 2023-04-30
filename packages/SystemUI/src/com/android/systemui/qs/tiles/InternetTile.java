@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+/**
+ * Changes from Qualcomm Innovation Center are provided under the following license:
+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause-Clear
+ */
+
 package com.android.systemui.qs.tiles;
 
 import android.annotation.NonNull;
@@ -61,6 +67,7 @@ import com.android.systemui.statusbar.connectivity.SignalCallback;
 import com.android.systemui.statusbar.connectivity.WifiIcons;
 import com.android.systemui.statusbar.connectivity.WifiIndicators;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
+import com.android.systemui.util.CarrierNameCustomization;
 
 import java.io.PrintWriter;
 
@@ -79,6 +86,7 @@ public class InternetTile extends SecureQSTile<SignalState> {
     protected final InternetSignalCallback mSignalCallback = new InternetSignalCallback();
     private final InternetDialogFactory mInternetDialogFactory;
     final Handler mHandler;
+    private CarrierNameCustomization mCarrierNameCustomization;
 
     @Inject
     public InternetTile(
@@ -93,7 +101,11 @@ public class InternetTile extends SecureQSTile<SignalState> {
             NetworkController networkController,
             AccessPointController accessPointController,
             InternetDialogFactory internetDialogFactory,
+<<<<<<< HEAD
             KeyguardStateController keyguardStateController
+=======
+            CarrierNameCustomization carrierNameCustomization
+>>>>>>> 1456b57abc6f4932f35b049c2b1bd7978acb127d
     ) {
         super(host, backgroundLooper, mainHandler, falsingManager, metricsLogger,
                 statusBarStateController, activityStarter, qsLogger, keyguardStateController);
@@ -103,6 +115,7 @@ public class InternetTile extends SecureQSTile<SignalState> {
         mAccessPointController = accessPointController;
         mDataController = mController.getMobileDataController();
         mController.observe(getLifecycle(), mSignalCallback);
+        mCarrierNameCustomization = carrierNameCustomization;
     }
 
     @Override
@@ -282,8 +295,14 @@ public class InternetTile extends SecureQSTile<SignalState> {
                 // Not data sim, don't display.
                 return;
             }
-            mCellularInfo.mDataSubscriptionName = indicators.qsDescription == null
-                    ? mController.getMobileDataNetworkName() : indicators.qsDescription;
+            if (mCarrierNameCustomization.isRoamingCustomizationEnabled()
+                    && mCarrierNameCustomization.isRoaming(indicators.subId)) {
+                mCellularInfo.mDataSubscriptionName =
+                        mCarrierNameCustomization.getRoamingCarrierName(indicators.subId);
+            } else {
+                mCellularInfo.mDataSubscriptionName = indicators.qsDescription == null
+                        ? mController.getMobileDataNetworkName() : indicators.qsDescription;
+            }
             mCellularInfo.mDataContentDescription = indicators.qsDescription != null
                     ? indicators.typeContentDescriptionHtml : null;
             mCellularInfo.mMobileSignalIconId = indicators.qsIcon.icon;
