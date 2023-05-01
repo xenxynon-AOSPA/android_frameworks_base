@@ -101,11 +101,8 @@ public class InternetTile extends SecureQSTile<SignalState> {
             NetworkController networkController,
             AccessPointController accessPointController,
             InternetDialogFactory internetDialogFactory,
-<<<<<<< HEAD
-            KeyguardStateController keyguardStateController
-=======
+            KeyguardStateController keyguardStateController,
             CarrierNameCustomization carrierNameCustomization
->>>>>>> 1456b57abc6f4932f35b049c2b1bd7978acb127d
     ) {
         super(host, backgroundLooper, mainHandler, falsingManager, metricsLogger,
                 statusBarStateController, activityStarter, qsLogger, keyguardStateController);
