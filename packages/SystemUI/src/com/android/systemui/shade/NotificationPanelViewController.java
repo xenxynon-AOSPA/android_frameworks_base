@@ -17,7 +17,6 @@
 package com.android.systemui.shade;
 
 import static android.app.StatusBarManager.WINDOW_STATE_SHOWING;
-import static android.provider.Settings.Secure.STATUS_BAR_QUICK_QS_PULLDOWN;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
@@ -226,7 +225,6 @@ import com.android.systemui.statusbar.policy.KeyguardUserSwitcherController;
 import com.android.systemui.statusbar.policy.KeyguardUserSwitcherView;
 import com.android.systemui.statusbar.policy.OnHeadsUpChangedListener;
 import com.android.systemui.statusbar.window.StatusBarWindowStateController;
-import com.android.systemui.tuner.TunerService;
 import com.android.systemui.unfold.SysUIUnfoldComponent;
 import com.android.systemui.util.Compile;
 import com.android.systemui.util.LargeScreenUtils;
@@ -324,7 +322,6 @@ public final class NotificationPanelViewController implements Dumpable {
     private final ConfigurationController mConfigurationController;
     private final Provider<FlingAnimationUtils.Builder> mFlingAnimationUtilsBuilder;
     private final NotificationStackScrollLayoutController mNotificationStackScrollLayoutController;
-
     private final InteractionJankMonitor mInteractionJankMonitor;
     private final LayoutInflater mLayoutInflater;
     private final FeatureFlags mFeatureFlags;
@@ -645,11 +642,6 @@ public final class NotificationPanelViewController implements Dumpable {
     private final NotificationListContainer mNotificationListContainer;
     private final NotificationStackSizeCalculator mNotificationStackSizeCalculator;
     private final NPVCDownEventState.Buffer mLastDownEvents;
-
-    private final TunerService mTunerService;
-
-    private boolean mOneFingerQuickSettingsIntercept;
-
     private final KeyguardBottomAreaViewModel mKeyguardBottomAreaViewModel;
     private final KeyguardBottomAreaInteractor mKeyguardBottomAreaInteractor;
     private float mMinExpandHeight;
@@ -811,7 +803,6 @@ public final class NotificationPanelViewController implements Dumpable {
             OccludedToLockscreenTransitionViewModel occludedToLockscreenTransitionViewModel,
             @Main CoroutineDispatcher mainDispatcher,
             KeyguardTransitionInteractor keyguardTransitionInteractor,
-            TunerService tunerService,
             DumpManager dumpManager) {
         keyguardStateController.addCallback(new KeyguardStateController.Callback() {
             @Override
@@ -897,7 +888,6 @@ public final class NotificationPanelViewController implements Dumpable {
         mKeyguardQsUserSwitchComponentFactory = keyguardQsUserSwitchComponentFactory;
         mKeyguardUserSwitcherComponentFactory = keyguardUserSwitcherComponentFactory;
         mFragmentService = fragmentService;
-        mTunerService = tunerService;
         mSettingsChangeObserver = new SettingsChangeObserver(handler);
         mSplitShadeEnabled =
                 LargeScreenUtils.shouldUseSplitNotificationShade(mResources);
@@ -2550,18 +2540,7 @@ public final class NotificationPanelViewController implements Dumpable {
                         MotionEvent.BUTTON_SECONDARY) || event.isButtonPressed(
                         MotionEvent.BUTTON_TERTIARY));
 
-        final float w = mView.getMeasuredWidth();
-        final float x = event.getX();
-        float region = w * 1.f / 4.f; // TODO overlay region fraction?
-        boolean showQsOverride = false;
-
-        if (mOneFingerQuickSettingsIntercept) {
-                showQsOverride = mView.isLayoutRtl() ? x < region : w - region < x;
-        }
-
-        showQsOverride &= mBarState == StatusBarState.SHADE;
-
-        return twoFingerDrag || showQsOverride || stylusButtonClickDrag || mouseButtonClickDrag;
+        return twoFingerDrag || stylusButtonClickDrag || mouseButtonClickDrag;
     }
 
     private void handleQsDown(MotionEvent event) {
@@ -5809,8 +5788,7 @@ public final class NotificationPanelViewController implements Dumpable {
         positionClockAndNotifications(true /* forceUpdate */);
     }
 
-    private final class ShadeAttachStateChangeListener implements View.OnAttachStateChangeListener,
-            TunerService.Tunable {
+    private final class ShadeAttachStateChangeListener implements View.OnAttachStateChangeListener {
         @Override
         public void onViewAttachedToWindow(View v) {
             mFragmentService.getFragmentHostManager(mView)
@@ -5818,7 +5796,6 @@ public final class NotificationPanelViewController implements Dumpable {
             mStatusBarStateController.addCallback(mStatusBarStateListener);
             mStatusBarStateListener.onStateChanged(mStatusBarStateController.getState());
             mConfigurationController.addCallback(mConfigurationListener);
-            mTunerService.addTunable(this, STATUS_BAR_QUICK_QS_PULLDOWN);
             // Theme might have changed between inflating this view and attaching it to the
             // window, so
             // force a call to onThemeChanged
@@ -5835,15 +5812,7 @@ public final class NotificationPanelViewController implements Dumpable {
                     .removeTagListener(QS.TAG, mQsFragmentListener);
             mStatusBarStateController.removeCallback(mStatusBarStateListener);
             mConfigurationController.removeCallback(mConfigurationListener);
-            mTunerService.removeTunable(this);
             mFalsingManager.removeTapListener(mFalsingTapListener);
-        }
-
-        @Override
-        public void onTuningChanged(String key, String newValue) {
-            if (STATUS_BAR_QUICK_QS_PULLDOWN.equals(key)) {
-                mOneFingerQuickSettingsIntercept = TunerService.parseIntegerSwitch(newValue, true);
-            }
         }
     }
 
