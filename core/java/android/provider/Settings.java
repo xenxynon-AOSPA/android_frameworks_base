@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -11160,7 +11161,7 @@ public final class Settings {
 
         /**
          * Keys we no longer back up under the current schema, but want to continue to
-         * process when restoring historical backup datasets.
+j         * process when restoring historical backup datasets.
          *
          * All settings in {@link LEGACY_RESTORE_SETTINGS} array *must* have a non-null validator,
          * otherwise they won't be restored.
@@ -11341,6 +11342,19 @@ public final class Settings {
          * @hide
          */
         public static final String QS_SHOW_DATA_USAGE = "qs_show_data_usage";
+
+        /**
+         * Whether to show ambient instead of waking for the tap gesture
+         * @hide
+         */
+        public static final String DOZE_TAP_GESTURE_AMBIENT = "doze_tap_gesture_ambient";
+
+        /**
+         * Whether to show ambient instead of waking for the pickup gesture
+         * Do note quick pickup (device sensor) is already configured to do that
+         * @hide
+         */
+        public static final String DOZE_PICK_UP_GESTURE_AMBIENT = "doze_pick_up_gesture_ambient";
 
         /**
          * These entries are considered common between the personal and the managed profile,
