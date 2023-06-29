@@ -491,7 +491,7 @@
     <dimen name="brightness_mirror_height">48dp</dimen>
 
     <dimen name="volume_dialog_panel_transparent_padding_horizontal">8dp</dimen>
-
+    <dimen name="volume_tool_tip_horizontal_margin">76dp</dimen>
     <dimen name="volume_dialog_panel_transparent_padding">20dp</dimen>
 
     <dimen name="volume_dialog_ringer_rows_padding">7dp</dimen>
