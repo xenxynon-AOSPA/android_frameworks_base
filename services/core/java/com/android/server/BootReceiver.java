@@ -137,6 +137,7 @@ public class BootReceiver extends BroadcastReceiver {
             public void run() {
                 try {
                     logBootEvents(context);
+                    resetDropboxRateLimiter();
                 } catch (Exception e) {
                     Slog.e(TAG, "Can't log boot events", e);
                 }
@@ -310,6 +311,14 @@ public class BootReceiver extends BroadcastReceiver {
     }
 
     private static final DropboxRateLimiter sDropboxRateLimiter = new DropboxRateLimiter();
+
+    /**
+     * Reset the dropbox rate limiter.
+     */
+    @VisibleForTesting
+    public static void resetDropboxRateLimiter() {
+        sDropboxRateLimiter.reset();
+    }
 
     /**
      * Add a tombstone to the DropBox.

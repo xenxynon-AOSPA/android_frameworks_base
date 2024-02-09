@@ -3198,7 +3198,7 @@
     <string name="config_defaultNetworkScorerPackageName"></string>
 
     <!-- The amount to scale fullscreen snapshots for Overview and snapshot starting windows. -->
-    <item name="config_highResTaskSnapshotScale" format="float" type="dimen">1.0</item>
+    <item name="config_highResTaskSnapshotScale" format="float" type="dimen">0.8</item>
 
     <!-- The amount to scale reduced scale snapshots for Overview and snapshot starting windows.
          Reduced scale snapshots are loaded before full screen snapshots to improve load times and
@@ -3313,7 +3313,7 @@
         <item>restart</item>
         <item>logout</item>
         <item>screenshot</item>
-        <item>bugreport</item>
+        <!--<item>bugreport</item>-->
     </string-array>
 
     <!-- Number of milliseconds to hold a wake lock to ensure that drawing is fully
@@ -4428,6 +4428,8 @@
 
     <!-- URI for camera shutter sound -->
     <string translatable="false" name="config_cameraShutterSound">/product/media/audio/ui/camera_click.ogg</string>
+
+    <string translatable="false" name="config_screenshotSound">/product/media/audio/ui/screenshot.ogg</string>
 
     <!-- URI for default ringtone sound file to be used for silent ringer vibration -->
     <string translatable="false" name="config_defaultRingtoneVibrationSound"></string>
@@ -5789,7 +5791,7 @@
     </string-array>
 
     <!-- the number of the max cached processes in the system. -->
-    <integer name="config_customizedMaxCachedProcesses">32</integer>
+    <integer name="config_customizedMaxCachedProcesses">60</integer>
 
     <!-- Whether this device should support taking app snapshots on closure -->
     <bool name="config_disableTaskSnapshots">false</bool>

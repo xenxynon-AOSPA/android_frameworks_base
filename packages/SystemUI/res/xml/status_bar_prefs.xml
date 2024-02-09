@@ -80,6 +80,11 @@
         android:icon="@drawable/ic_statusbar_mobile_network" />
 
     <com.android.systemui.tuner.StatusBarSwitch
+        android:key="nfc"
+        android:title="@string/status_bar_nfc"
+        android:icon="@drawable/ic_statusbar_nfc" />
+
+    <com.android.systemui.tuner.StatusBarSwitch
         android:key="airplane"
         android:title="@string/status_bar_airplane"
         android:icon="@drawable/ic_statusbar_airplane" />
@@ -88,6 +93,16 @@
         android:key="roaming"
         android:title="@string/status_bar_roaming"
         android:icon="@drawable/ic_statusbar_roaming" />
+
+    <com.android.systemui.tuner.StatusBarSwitch
+        android:key="volte"
+        android:title="@string/status_bar_volte"
+        android:icon="@drawable/ic_statusbar_volte" />
+
+    <com.android.systemui.tuner.StatusBarSwitch
+        android:key="vowifi"
+        android:title="@string/status_bar_vowifi"
+        android:icon="@drawable/ic_statusbar_vowifi" />
 
     <com.android.systemui.tuner.StatusBarSwitch
         android:key="vpn"
@@ -103,6 +118,16 @@
         android:key="alarm_clock"
         android:title="@string/status_bar_alarm"
         android:icon="@drawable/ic_statusbar_alarm" />
+
+    <com.android.systemui.tuner.StatusBarSwitch
+        android:key="location"
+        android:title="@string/status_bar_location"
+        android:icon="@drawable/ic_statusbar_location" />
+
+    <com.android.systemui.tuner.StatusBarSwitch
+        android:key="microphone"
+        android:title="@string/status_bar_microphone"
+        android:icon="@drawable/ic_statusbar_mic" />
 
     <com.android.systemui.tuner.StatusBarSwitch
         android:key="cameratoggle"

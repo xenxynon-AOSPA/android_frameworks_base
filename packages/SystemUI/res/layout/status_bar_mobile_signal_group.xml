@@ -18,12 +18,74 @@
 -->
 <com.android.systemui.statusbar.StatusBarMobileView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:systemui="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mobile_combo"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:gravity="center_vertical" >
-
-    <include layout="@layout/status_bar_mobile_signal_group_inner" />
-
+    android:gravity="center_vertical">
+    <LinearLayout
+        android:id="@+id/mobile_group"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+        <Space
+            android:id="@+id/mobile_type_space"
+            android:layout_height="match_parent"
+            android:layout_width="2dp"
+            android:visibility="gone"
+        />
+        <LinearLayout
+            android:id="@+id/mobile_type_container"
+            android:layout_width="wrap_content"
+            android:layout_height="15dp"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingHorizontal="2dp"
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/mobile_type"
+                android:layout_height="@dimen/mobile_type_icon_height"
+                android:layout_width="wrap_content"
+                android:layout_marginVertical="@dimen/mobile_type_icon_margin_vertical"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true" />
+            <ImageView
+                android:id="@+id/mobile_inout"
+                android:layout_height="7dp"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                android:paddingTop="1dp"
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
+                android:visibility="gone" />
+        </LinearLayout>
+>>>>>>> 0dac1496a299 (SystemUI: Improve statusbar mobile/wifi activity indicators)
+        <Space
+            android:id="@+id/mobile_volte_space"
+            android:layout_height="match_parent"
+            android:layout_width="3dp"
+            android:visibility="gone"
+        />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
+            <com.android.systemui.statusbar.AnimatedImageView
+                android:id="@+id/mobile_signal"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                systemui:hasOverlappingRendering="false"
+            />
+            <ImageView
+                android:id="@+id/mobile_volte"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:visibility="gone" />
+        </FrameLayout>
+    </LinearLayout>
 </com.android.systemui.statusbar.StatusBarMobileView>
 

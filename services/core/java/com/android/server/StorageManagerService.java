@@ -221,6 +221,9 @@ class StorageManagerService extends IStorageManager.Stub
 
     @GuardedBy("mLock")
     private final Set<Integer> mCeStoragePreparedUsers = new ArraySet<>();
+    
+    @GuardedBy("mLock")
+    private final ArrayMap<Integer, ArraySet<String>> mPackagesByUid = new ArrayMap<>();
 
     public static class Lifecycle extends SystemService {
         private StorageManagerService mStorageManagerService;
@@ -1717,6 +1720,23 @@ class StorageManagerService extends IStorageManager.Stub
     }
 
     private void onVolumeStateChangedAsync(VolumeInfo vol, int oldState, int newState) {
+        if (newState == VolumeInfo.STATE_MOUNTED) {
+            // Private volumes can be unmounted and re-mounted even after a user has
+            // been unlocked; on devices that support encryption keys tied to the filesystem,
+            // this requires setting up the keys again.
+            try {
+                prepareUserStorageIfNeeded(vol);
+            } catch (Exception e) {
+                // Unusable partition, unmount.
+                try {
+                    mVold.unmount(vol.id);
+                } catch (Exception ee) {
+                    Slog.wtf(TAG, ee);
+                }
+                return;
+            }
+        }
+
         synchronized (mLock) {
             // Remember that we saw this volume so we're ready to accept user
             // metadata, or so we can annoy them when a private volume is ejected
@@ -1740,13 +1760,6 @@ class StorageManagerService extends IStorageManager.Stub
                 rec.lastSeenMillis = System.currentTimeMillis();
                 writeSettingsLocked();
             }
-        }
-
-        if (newState == VolumeInfo.STATE_MOUNTED) {
-            // Private volumes can be unmounted and re-mounted even after a user has
-            // been unlocked; on devices that support encryption keys tied to the filesystem,
-            // this requires setting up the keys again.
-            prepareUserStorageIfNeeded(vol);
         }
 
         // This is a blocking call to Storage Service which needs to process volume state changed
@@ -2110,14 +2123,22 @@ class StorageManagerService extends IStorageManager.Stub
 
     private void updateLegacyStorageApps(String packageName, int uid, boolean hasLegacy) {
         synchronized (mLock) {
+            mPackagesByUid.computeIfAbsent(uid, key -> new ArraySet<>()).add(packageName);
+
             if (hasLegacy) {
-                Slog.v(TAG, "Package " + packageName + " has legacy storage");
+                if (DEBUG_EVENTS) Slog.v(TAG, "Package " + packageName + " has legacy storage");
                 mUidsWithLegacyExternalStorage.add(uid);
             } else {
-                // TODO(b/149391976): Handle shared user id. Check if there's any other
-                // installed app with legacy external storage before removing
-                Slog.v(TAG, "Package " + packageName + " does not have legacy storage");
-                mUidsWithLegacyExternalStorage.remove(uid);
+                ArraySet<String> packages = mPackagesByUid.get(uid);
+                if (packages != null) {
+                    packages.remove(packageName);
+                    if (packages.isEmpty()) {
+                        mUidsWithLegacyExternalStorage.remove(uid);
+                        mPackagesByUid.remove(uid);
+                    }
+                } else {
+                    mUidsWithLegacyExternalStorage.remove(uid);
+                }
             }
         }
     }
@@ -2125,34 +2146,33 @@ class StorageManagerService extends IStorageManager.Stub
     private void snapshotAndMonitorLegacyStorageAppOp(UserHandle user) {
         int userId = user.getIdentifier();
 
-        // TODO(b/149391976): Use mIAppOpsService.getPackagesForOps instead of iterating below
-        // It should improve performance but the AppOps method doesn't return any app here :(
-        // This operation currently takes about ~20ms on a freshly flashed device
-        for (ApplicationInfo ai : mPmInternal.getInstalledApplications(MATCH_DIRECT_BOOT_AWARE
-                        | MATCH_DIRECT_BOOT_UNAWARE | MATCH_UNINSTALLED_PACKAGES | MATCH_ANY_USER,
-                        userId, Process.myUid())) {
-            try {
-                boolean hasLegacy = mIAppOpsService.checkOperation(OP_LEGACY_STORAGE, ai.uid,
-                        ai.packageName) == MODE_ALLOWED;
-                updateLegacyStorageApps(ai.packageName, ai.uid, hasLegacy);
-            } catch (RemoteException e) {
-                Slog.e(TAG, "Failed to check legacy op for package " + ai.packageName, e);
+        try {
+            List<AppOpsManager.PackageOps> packagesOps = mIAppOpsService.getPackagesForOps(new int[]{OP_LEGACY_STORAGE});
+            if (packagesOps != null) {
+                for (AppOpsManager.PackageOps packageOps : packagesOps) {
+                    String packageName = packageOps.getPackageName();
+                    int uid = packageOps.getUid();
+                    for (AppOpsManager.OpEntry entry : packageOps.getOps()) {
+                        boolean hasLegacy = entry.getMode() == MODE_ALLOWED;
+                        updateLegacyStorageApps(packageName, uid, hasLegacy);
+                    }
+                }
             }
+        } catch (RemoteException e) {
+            Slog.e(TAG, "Failed to get packages for ops", e);
         }
 
-        if (mPackageMonitorsForUser.get(userId) == null) {
+        mPackageMonitorsForUser.computeIfAbsent(userId, key -> {
             PackageMonitor monitor = new PackageMonitor() {
                 @Override
                 public void onPackageRemoved(String packageName, int uid) {
                     updateLegacyStorageApps(packageName, uid, false);
                 }
-            };
-            // TODO(b/149391976): Use different handler?
-            monitor.register(mContext, user, true, mHandler);
-            mPackageMonitorsForUser.put(userId, monitor);
-        } else {
-            Slog.w(TAG, "PackageMonitor is already registered for: " + userId);
-        }
+        };
+        // TODO(b/149391976): Use different handler?
+        monitor.register(mContext, user, true, mHandler);
+            return monitor;
+        });
     }
 
     private static long getLastAccessTime(AppOpsManager manager,
@@ -3366,7 +3386,7 @@ class StorageManagerService extends IStorageManager.Stub
         }
     }
 
-    private void prepareUserStorageIfNeeded(VolumeInfo vol) {
+    private void prepareUserStorageIfNeeded(VolumeInfo vol) throws Exception {
         if (vol.type != VolumeInfo.TYPE_PRIVATE) {
             return;
         }
@@ -3393,11 +3413,15 @@ class StorageManagerService extends IStorageManager.Stub
     public void prepareUserStorage(String volumeUuid, int userId, int serialNumber, int flags) {
         enforcePermission(android.Manifest.permission.STORAGE_INTERNAL);
 
-        prepareUserStorageInternal(volumeUuid, userId, serialNumber, flags);
+        try {
+            prepareUserStorageInternal(volumeUuid, userId, serialNumber, flags);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void prepareUserStorageInternal(String volumeUuid, int userId, int serialNumber,
-            int flags) {
+            int flags) throws Exception {
         try {
             mVold.prepareUserStorage(volumeUuid, userId, serialNumber, flags);
             // After preparing user storage, we should check if we should mount data mirror again,
@@ -3424,7 +3448,7 @@ class StorageManagerService extends IStorageManager.Stub
                         + "; device may be insecure!");
                 return;
             }
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 

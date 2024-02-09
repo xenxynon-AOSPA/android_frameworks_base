@@ -378,6 +378,7 @@ import com.android.internal.util.function.QuadFunction;
 import com.android.internal.util.function.QuintFunction;
 import com.android.internal.util.function.UndecFunction;
 import com.android.server.AlarmManagerInternal;
+import com.android.server.BootReceiver;
 import com.android.server.DeviceIdleInternal;
 import com.android.server.DisplayThread;
 import com.android.server.IntentResolver;
@@ -18060,6 +18061,14 @@ public class ActivityManagerService extends IActivityManager.Stub
     }
 
     /**
+     * Reset the dropbox rate limiter here and in BootReceiver
+     */
+    void resetDropboxRateLimiter() {
+        mDropboxRateLimiter.reset();
+        BootReceiver.resetDropboxRateLimiter();
+    }
+
+    /**
      * Kill processes for the user with id userId and that depend on the package named packageName
      */
     @Override
@@ -18790,5 +18799,11 @@ public class ActivityManagerService extends IActivityManager.Stub
     @Override
     public boolean shouldForceCutoutFullscreen(String packageName) {
         return mActivityTaskManager.shouldForceCutoutFullscreen(packageName);
+    }
+
+    boolean shouldSkipBootCompletedBroadcastForPackage(ApplicationInfo info) {
+        return getAppOpsManager().checkOpNoThrow(
+                AppOpsManager.OP_RUN_ANY_IN_BACKGROUND,
+                info.uid, info.packageName) != AppOpsManager.MODE_ALLOWED;
     }
 }

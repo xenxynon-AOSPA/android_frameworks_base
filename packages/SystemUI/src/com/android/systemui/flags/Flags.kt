@@ -192,7 +192,7 @@ object Flags {
 
     // TODO(b/262780002): Tracking Bug
     @JvmField
-    val REVAMPED_WALLPAPER_UI = unreleasedFlag(222, "revamped_wallpaper_ui", teamfood = true)
+    val REVAMPED_WALLPAPER_UI = releasedFlag(222, "revamped_wallpaper_ui", teamfood = true)
 
     // flag for controlling auto pin confirmation and material u shapes in bouncer
     @JvmField
@@ -297,7 +297,7 @@ object Flags {
     /** Enables Font Scaling Quick Settings tile */
     // TODO(b/269341316): Tracking Bug
     @JvmField
-    val ENABLE_FONT_SCALING_TILE = unreleasedFlag(509, "enable_font_scaling_tile", teamfood = false)
+    val ENABLE_FONT_SCALING_TILE = releasedFlag(509, "enable_font_scaling_tile", teamfood = false)
 
     /** Enables new QS Edit Mode visual refresh */
     // TODO(b/269787742): Tracking Bug
@@ -356,7 +356,7 @@ object Flags {
     val SCREEN_CONTENTS_TRANSLATION = unreleasedFlag(803, "screen_contents_translation")
 
     // 804 - monochromatic themes
-    @JvmField val MONOCHROMATIC_THEME = unreleasedFlag(804, "monochromatic", teamfood = true)
+    @JvmField val MONOCHROMATIC_THEME = releasedFlag(804, "monochromatic", teamfood = true)
 
     // 900 - media
     // TODO(b/254512697): Tracking Bug
@@ -389,7 +389,7 @@ object Flags {
     val MEDIA_TTT_RECEIVER_SUCCESS_RIPPLE = releasedFlag(910, "media_ttt_receiver_success_ripple")
 
     // TODO(b/263512203): Tracking Bug
-    val MEDIA_EXPLICIT_INDICATOR = unreleasedFlag(911, "media_explicit_indicator")
+    val MEDIA_EXPLICIT_INDICATOR = releasedFlag(911, "media_explicit_indicator")
 
     // TODO(b/265813373): Tracking Bug
     val MEDIA_TAP_TO_TRANSFER_DISMISS_GESTURE = releasedFlag(912, "media_ttt_dismiss_gesture")
